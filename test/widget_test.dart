@@ -38,4 +38,37 @@ void main() {
       findsOneWidget,
     );
   });
+  testWidgets('Setiap menu memiliki warna berbeda', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    final materialProyek = tester.widget<Material>(
+      find
+          .ancestor(
+            of: find.text('Lihat Proyek'),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+
+    final materialTambah = tester.widget<Material>(
+      find
+          .ancestor(
+            of: find.text('Tambah Proyek'),
+            matching: find.byType(Material),
+          )
+          .first,
+    );
+
+    final materialLogout = tester.widget<Material>(
+      find
+          .ancestor(of: find.text('Logout'), matching: find.byType(Material))
+          .first,
+    );
+
+    expect(materialProyek.color, Colors.blue);
+    expect(materialTambah.color, Colors.green);
+    expect(materialLogout.color, Colors.red);
+  });
 }
