@@ -74,13 +74,43 @@ Perbedaan `StatelessWidget` dan `StatefulWidget` ada pada cara keduanya mengelol
 
 Misalnya, saat saya mengubah warna tombol atau tulisan, biasanya cukup menggunakan hot reload untuk melihat hasilnya. Tapi kalau ada perubahan pada bagian kode yang hanya dijalankan ketika aplikasi dimulai, hot reload belum tentu bisa menerapkannya, jadi perlu hot restart. Kalau perubahannya berkaitan dengan konfigurasi native atau dependency tertentu, terkadang aplikasi harus dihentikan dan dijalankan lagi menggunakan full restart.
 
+### Tugas 8
+
+**1. Jelaskan perbedaan Navigator.push(), Navigator.pushReplacement(), dan Navigator.pop(). Metode apa yang digunakan untuk membuka formulir dari kartu aksi? Jelaskan juga bagaimana opsi Home di Drawer membawa pengguna kembali ke halaman utama.**
+
+Menurut saya, perbedaan ketiganya ada di cara Flutter mengatur halaman. `Navigator.push()` digunakan untuk membuka halaman baru, tetapi halaman sebelumnya masih disimpan. Kalau `Navigator.pushReplacement()`, halaman yang sedang dibuka akan diganti dengan halaman baru. Sedangkan `Navigator.pop()` digunakan untuk menutup halaman yang sedang dibuka dan kembali ke halaman sebelumnya.
+
+Di aplikasi saya, `Navigator.push()` digunakan saat menekan kartu Tambah Education di Home, jadi pengguna masih bisa kembali ke Home. Sementara itu, menu di Drawer menggunakan `Navigator.pushReplacement()` untuk berpindah halaman, termasuk saat memilih Home untuk kembali ke halaman utama.
+
+**2. Bagaimana susunan Scaffold, AppBar, dan Drawer membantu menjaga struktur halaman tetap konsisten? Berikan satu contoh penggunaan warna tema portofolio di lebih dari satu halaman.**
+
+Menurut saya, ketiga widget ini membuat tampilan setiap halaman jadi lebih konsisten. `Scaffold` digunakan sebagai kerangka halaman, `AppBar` untuk menampilkan judul di bagian atas, dan `Drawer` untuk menyediakan menu navigasi. Jadi, walaupun isi halamannya berbeda, pengguna tetap bisa menemukan bagian yang sama di setiap halaman.
+
+Contohnya, halaman Home dan Add Education Form sama-sama menggunakan warna utama dari `Theme.of(context).colorScheme.primary` pada `AppBar`. Dengan begitu, warna tampilannya tetap sama dan tidak perlu diatur satu per satu secara manual.
+
+**3. Mengapa tata letak tersebut dipilih untuk formulir? Jelaskan peran widget pengatur jarak dan widget penggulir ketika ruang layar terbatas.**
+
+Saya memilih `Column` karena ingin input formulir tersusun dari atas ke bawah supaya lebih mudah diisi. Saya juga menggunakan `Padding` agar input tidak terlalu menempel ke pinggir layar dan `SizedBox` untuk memberi jarak antarinput supaya tampilannya tidak terlalu rapat.
+
+Karena Education Form memiliki cukup banyak input, saya menggunakan `SingleChildScrollView` supaya halaman tetap bisa digeser ke bawah, terutama saat dibuka di layar kecil. Saya juga sempat mengalami masalah *overflow* di halaman Home setelah menambah kartu Education. Setelah diperbaiki dengan `SingleChildScrollView`, halaman Home bisa menampilkan kartu yang sebelumnya tidak muat dalam satu layar.
+
+**4. Apa peran GlobalKey<FormState>, validator, dan validate() saat tombol Simpan ditekan? Berikan satu contoh nilai yang ditolak oleh validasi dan jelaskan mengapa memilih jenis input atau papan ketik saja belum cukup.**
+
+Dari yang saya pahami, `GlobalKey<FormState>` digunakan supaya kita bisa mengakses form dan menjalankan validasinya. `validator` berisi aturan untuk mengecek input, sedangkan `validate()` digunakan untuk menjalankan pengecekan tersebut ketika tombol Simpan ditekan.
+
+Contohnya, pada field Institution, saya membuat validasi supaya pengguna tidak bisa mengosongkan kolom atau hanya mengisinya dengan spasi. Kalau input tidak sesuai, pesan error akan muncul dan ringkasan tidak ditampilkan. Saya juga menggunakan `TextInputType.url` untuk input Thumbnail URL, tetapi ternyata itu hanya mengatur jenis keyboard yang digunakan. Jadi, tetap perlu `validator` supaya aplikasi bisa memeriksa apakah URL yang dimasukkan sudah sesuai format.
+
+
+
 ## AI Usage Disclosure
 
-### Tools and Purpose
+### Tugas 7
+
+#### Tools and Purpose
 
 Saya menggunakan ChatGPT sebagai alat bantu belajar selama mengerjakan Tutorial 08 dan Individual Assignment 7. AI digunakan untuk membantu menjelaskan konsep Flutter, memberikan panduan implementasi secara bertahap, membantu memahami pesan error, serta mendiskusikan pengujian dan struktur kode.
 
-### Prompting Strategy
+#### Prompting Strategy
 
 Saya menggunakan pertanyaan yang berhubungan langsung dengan kode yang sedang saya kerjakan. Saya meminta penjelasan menggunakan bahasa sederhana, contoh dari proyek sendiri, dan perbandingan antara beberapa pendekatan.
 
@@ -90,13 +120,41 @@ Beberapa topik yang saya diskusikan antara lain:
 2. Mengapa automated widget testing masih berguna meskipun tampilan warna tombol sudah terlihat benar saat diperiksa secara manual di Chrome.
 3. Bagaimana menyesuaikan widget test bawaan Flutter yang masih menguji aplikasi counter, padahal aplikasi sudah diubah menjadi halaman portofolio.
 
-### Parts Assisted by AI
+#### Parts Assisted by AI
 
 AI membantu saya memahami pemisahan `main.dart` dan `menu.dart`, pembuatan widget `InfoCard` dan `ItemCard`, penerapan warna yang berbeda pada menu, serta penyusunan widget testing.
 
 AI juga membantu memberikan contoh perintah Git dan menjelaskan proses commit serta push ke repository GitHub. Untuk dokumentasi, AI digunakan sebagai bantuan dalam menyusun struktur README dan merapikan penjelasan refleksi.
 
-### AI Conversation Reference
-Dokumentasi percakapan dengan AI selama pengerjaan tugas dapat dilihat melalui link berikut:
+### Tugas 8
 
-ristek.link/AiChatAlsa
+#### Tools and Purpose
+
+Selama mengerjakan Tugas 8, saya menggunakan ChatGPT untuk membantu memahami materi Flutter yang masih membingungkan, terutama tentang navigasi halaman, form, dan validasi input. Saya juga menggunakan ChatGPT untuk membantu membuat Education Form berdasarkan model Education yang sebelumnya sudah saya buat di Django.
+
+Selain itu, saya menggunakan ChatGPT ketika menemukan warning pada kode atau masalah pada tampilan aplikasi. Saya meminta penjelasan tentang penyebab masalahnya supaya bisa lebih memahami bagian yang perlu diperbaiki.
+
+#### Prompting Strategy
+
+Saya biasanya bertanya berdasarkan kode yang sedang saya kerjakan atau masalah yang muncul saat menjalankan aplikasi. Kalau ada bagian yang belum saya pahami, saya meminta penjelasan menggunakan bahasa sederhana dan contoh langsung dari Education Form.
+
+Beberapa pertanyaan yang saya diskusikan antara lain:
+
+1. Mengapa pesan error pada Institution, Degree, dan Field of Study belum muncul meskipun sudah menggunakan `validator`, serta apa perbedaan `onChanged` dan `validator`.
+2. Apa perbedaan `Navigator.push()` dan `Navigator.pushReplacement()` ketika digunakan untuk membuka Education Form melalui kartu Home dan Drawer, terutama pengaruhnya terhadap tombol Back.
+3. Mengapa `flutter analyze` masih menampilkan warning `unused_field` meskipun variabel untuk menyimpan input sudah dibuat.
+4. Mengapa halaman Home mengalami overflow dan tidak bisa di-scroll setelah saya menambahkan kartu Tambah Education.
+
+#### Parts Assisted by AI
+
+ChatGPT membantu saya membuat Education Form menggunakan `StatefulWidget`, menambahkan input sesuai model Education, serta membuat pemilihan tanggal menggunakan `showDatePicker()`. AI juga membantu memberikan contoh validasi untuk input wajib, batas maksimal karakter, format URL, dan urutan tanggal.
+
+Selain itu, ChatGPT membantu saya membuat tombol Simpan dan `AlertDialog` untuk menampilkan ringkasan data yang sudah diisi. Untuk navigasi, AI membantu menghubungkan Education Form dengan kartu di halaman Home dan menu Drawer.
+
+Saat menemukan warning `unused_field` dan masalah overflow pada halaman Home, saya menggunakan ChatGPT untuk memahami penyebabnya dan mencoba memperbaiki kode di VS Code. Setelah itu, saya menjalankan `flutter analyze` dan melakukan pengujian langsung, seperti mencoba input kosong, tanggal yang tidak sesuai, serta URL yang tidak valid.
+
+### AI Conversation Reference
+
+Dokumentasi percakapan dengan AI selama pengerjaan tugas dapat dilihat melalui tautan berikut:
+
+[Dokumentasi Percakapan AI](https://ristek.link/AiChatAlsa)
