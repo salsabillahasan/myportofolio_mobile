@@ -1,3 +1,4 @@
+import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:flutter/material.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
@@ -28,6 +29,16 @@ class ItemCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const ProjectFormPage()),
             );
           }
+
+          if (item.name == "Tambah Education") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EducationFormPage(),
+              ),
+            );
+          }
+
         },
 
         child: Container(
