@@ -108,6 +108,7 @@ void _showEducationSummary() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Add Education Form'),
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -219,7 +220,18 @@ void _showEducationSummary() {
                       ? 'Pilih tanggal mulai (opsional)'
                       : '${_startedAt!.day}/${_startedAt!.month}/${_startedAt!.year}',
                 ),
-                trailing: const Icon(Icons.arrow_drop_down),
+
+                trailing: _startedAt == null
+                    ? const Icon(Icons.arrow_drop_down)
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        tooltip: 'Hapus tanggal mulai',
+                        onPressed: () {
+                          setState(() {
+                            _startedAt = null;
+                          });
+                        },
+                      ),
                 onTap: () => _selectDate(isStartDate: true),
               ),
               const SizedBox(height: 16),
@@ -234,7 +246,18 @@ void _showEducationSummary() {
                       ? 'Pilih tanggal selesai (opsional)'
                       : '${_endedAt!.day}/${_endedAt!.month}/${_endedAt!.year}',
                 ),
-                trailing: const Icon(Icons.arrow_drop_down),
+
+                trailing: _endedAt == null
+                    ? const Icon(Icons.arrow_drop_down)
+                    : IconButton(
+                        icon: const Icon(Icons.clear),
+                        tooltip: 'Hapus tanggal selesai',
+                        onPressed: () {
+                          setState(() {
+                            _endedAt = null;
+                          });
+                        },
+                      ),
                 onTap: () => _selectDate(isStartDate: false),
               ),
 
