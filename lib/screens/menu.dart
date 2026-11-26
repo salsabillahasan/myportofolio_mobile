@@ -26,6 +26,7 @@ class MyHomePage extends StatelessWidget {
     final isLoggedIn = context.watch<AuthState>().isLoggedIn;
     final items = [
       const ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
+      const ItemHomepage("Lihat Education", Icons.school_outlined, Colors.teal),
       const ItemHomepage("Tambah Proyek", Icons.add_circle, Colors.green),
       const ItemHomepage("Tambah Education", Icons.school, Colors.orange),
       ItemHomepage(

@@ -1,4 +1,5 @@
 import 'package:myportofolio_mobile/screens/education_form.dart';
+import 'package:myportofolio_mobile/screens/education_list_screen.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
@@ -45,7 +46,17 @@ class ItemCard extends StatelessWidget {
             );
           }
 
+          if (item.name == "Lihat Education") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const EducationListScreen(),
+              ),
+            );
+          }
+
           if (item.name == "Tambah Education") {
+            if (!await ensureLoggedIn(context) || !context.mounted) return;
             Navigator.push(
               context,
               MaterialPageRoute(

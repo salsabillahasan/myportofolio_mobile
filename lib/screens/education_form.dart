@@ -1,5 +1,10 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/models/education.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:provider/provider.dart';
 
 class EducationFormPage extends StatefulWidget {
   const EducationFormPage({super.key});
@@ -20,6 +25,7 @@ class _EducationFormPageState extends State<EducationFormPage> {
 
   String _description = "";
   String _thumbnail = "";
+  bool _isSubmitting = false;
 
   Future<void> _selectDate({required bool isStartDate}) async {
     final DateTime? picked = await showDatePicker(
@@ -42,62 +48,79 @@ class _EducationFormPageState extends State<EducationFormPage> {
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) {
-      return 'Tidak diisi';
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final isDateValid =
+        _startedAt == null ||
+        _endedAt == null ||
+        !_endedAt!.isBefore(_startedAt!);
+    if (!isDateValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tanggal selesai tidak boleh sebelum tanggal mulai!'),
+        ),
+      );
+      return;
     }
 
-    return '${date.day}/${date.month}/${date.year}';
-  }
+    if (!await ensureLoggedIn(context) || !mounted) return;
+    final token = context.read<AuthState>().token;
+    if (token == null) return;
 
-  void _showEducationSummary() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
+    setState(() => _isSubmitting = true);
+    try {
+      final created = await context.read<ApiClient>().createEducation(
+        Education(
+          institution: _institution.trim(),
+          degree: _degree.trim(),
+          fieldOfStudy: _fieldOfStudy.trim(),
+          startedAt: _startedAt,
+          endedAt: _endedAt,
+          description: _description.trim(),
+          thumbnail: _thumbnail.trim().isEmpty ? null : _thumbnail.trim(),
+        ),
+        token: token,
+      );
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
           title: const Text('Education berhasil ditambahkan!'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Institution: $_institution'),
-                const SizedBox(height: 8),
-
-                Text('Degree: $_degree'),
-                const SizedBox(height: 8),
-
-                Text('Field of Study: $_fieldOfStudy'),
-                const SizedBox(height: 8),
-
-                Text('Start Date: ${_formatDate(_startedAt)}'),
-                const SizedBox(height: 8),
-
-                Text('End Date: ${_formatDate(_endedAt)}'),
-                const SizedBox(height: 8),
-
-                Text(
-                  'Description: ${_description.isEmpty ? "Tidak diisi" : _description}',
-                ),
-                const SizedBox(height: 8),
-
-                Text(
-                  'Thumbnail URL: ${_thumbnail.isEmpty ? "Tidak diisi" : _thumbnail}',
-                ),
-              ],
-            ),
-          ),
+          content: Text('${created.institution} sudah tersimpan.'),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
+                Navigator.pop(context, true);
               },
               child: const Text('OK'),
             ),
           ],
+        ),
+      );
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      if (error.statusCode == 401) {
+        await context.read<AuthState>().logout();
+        if (!mounted) return;
+        await ensureLoggedIn(context);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login lagi, lalu tekan Simpan sekali lagi.'),
+          ),
         );
-      },
-    );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Education gagal disimpan (${error.statusCode}).'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   @override
@@ -322,29 +345,14 @@ class _EducationFormPageState extends State<EducationFormPage> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  onPressed: () {
-                    final isFormValid = _formKey.currentState!.validate();
-
-                    final isDateValid =
-                        _startedAt == null ||
-                        _endedAt == null ||
-                        !_endedAt!.isBefore(_startedAt!);
-
-                    if (!isDateValid) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Tanggal selesai tidak boleh sebelum tanggal mulai!',
-                          ),
-                        ),
-                      );
-                    }
-
-                    if (isFormValid && isDateValid) {
-                      _showEducationSummary();
-                    }
-                  },
-                  child: const Text('Simpan'),
+                  onPressed: _isSubmitting ? null : _submit,
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Simpan'),
                 ),
               ),
             ],
