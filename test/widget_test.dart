@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
 
 void main() {
   testWidgets('Homepage menampilkan identitas dan sambutan', (
@@ -11,39 +12,38 @@ void main() {
     expect(find.text('NPM'), findsOneWidget);
     expect(find.text('Name'), findsOneWidget);
     expect(find.text('Class'), findsOneWidget);
-
     expect(find.text('Selamat datang di MyPortfolio Mobile!'), findsOneWidget);
   });
 
-  testWidgets('Homepage menampilkan tiga menu', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
-
-    expect(find.text('Lihat Proyek'), findsOneWidget);
-    expect(find.text('Tambah Proyek'), findsOneWidget);
-    expect(find.text('Logout'), findsOneWidget);
-
-    expect(find.byIcon(Icons.folder), findsOneWidget);
-    expect(find.byIcon(Icons.add_circle), findsOneWidget);
-    expect(find.byIcon(Icons.logout), findsOneWidget);
-  });
-
-  testWidgets('Menekan menu menampilkan SnackBar', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
-
-    await tester.tap(find.text('Lihat Proyek'));
-    await tester.pump();
-
-    expect(
-      find.text('Kamu telah menekan tombol Lihat Proyek!'),
-      findsOneWidget,
-    );
-  });
-  testWidgets('Setiap menu memiliki warna berbeda', (
+  testWidgets('Homepage menampilkan opsi login saat belum login', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MyApp());
 
-    final materialProyek = tester.widget<Material>(
+    expect(find.text('Lihat Proyek'), findsOneWidget);
+    expect(find.text('Tambah Proyek'), findsOneWidget);
+    expect(find.text('Login'), findsOneWidget);
+    expect(find.text('Logout'), findsNothing);
+  });
+
+  testWidgets('Tambah Proyek meminta login sebelum membuka form', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    await tester.tap(find.text('Tambah Proyek'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(LoginScreen), findsOneWidget);
+    expect(find.byType(TextFormField), findsNWidgets(2));
+  });
+
+  testWidgets('Kartu menu mempertahankan warna masing-masing', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(const MyApp());
+
+    final projectCard = tester.widget<Material>(
       find
           .ancestor(
             of: find.text('Lihat Proyek'),
@@ -51,8 +51,7 @@ void main() {
           )
           .first,
     );
-
-    final materialTambah = tester.widget<Material>(
+    final addProjectCard = tester.widget<Material>(
       find
           .ancestor(
             of: find.text('Tambah Proyek'),
@@ -60,15 +59,14 @@ void main() {
           )
           .first,
     );
-
-    final materialLogout = tester.widget<Material>(
+    final loginCard = tester.widget<Material>(
       find
-          .ancestor(of: find.text('Logout'), matching: find.byType(Material))
+          .ancestor(of: find.text('Login'), matching: find.byType(Material))
           .first,
     );
 
-    expect(materialProyek.color, Colors.blue);
-    expect(materialTambah.color, Colors.green);
-    expect(materialLogout.color, Colors.red);
+    expect(projectCard.color, Colors.blue);
+    expect(addProjectCard.color, Colors.green);
+    expect(loginCard.color, Colors.red);
   });
 }
