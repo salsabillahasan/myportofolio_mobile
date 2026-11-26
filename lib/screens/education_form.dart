@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
@@ -6,8 +5,7 @@ class EducationFormPage extends StatefulWidget {
   const EducationFormPage({super.key});
 
   @override
-  State<EducationFormPage> createState() =>
-      _EducationFormPageState();
+  State<EducationFormPage> createState() => _EducationFormPageState();
 }
 
 class _EducationFormPageState extends State<EducationFormPage> {
@@ -16,7 +14,6 @@ class _EducationFormPageState extends State<EducationFormPage> {
   String _institution = "";
   String _degree = "";
   String _fieldOfStudy = "";
-
 
   DateTime? _startedAt;
   DateTime? _endedAt;
@@ -53,57 +50,55 @@ class _EducationFormPageState extends State<EducationFormPage> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-void _showEducationSummary() {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text(
-          'Education berhasil ditambahkan!',
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Institution: $_institution'),
-              const SizedBox(height: 8),
+  void _showEducationSummary() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Education berhasil ditambahkan!'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Institution: $_institution'),
+                const SizedBox(height: 8),
 
-              Text('Degree: $_degree'),
-              const SizedBox(height: 8),
+                Text('Degree: $_degree'),
+                const SizedBox(height: 8),
 
-              Text('Field of Study: $_fieldOfStudy'),
-              const SizedBox(height: 8),
+                Text('Field of Study: $_fieldOfStudy'),
+                const SizedBox(height: 8),
 
-              Text('Start Date: ${_formatDate(_startedAt)}'),
-              const SizedBox(height: 8),
+                Text('Start Date: ${_formatDate(_startedAt)}'),
+                const SizedBox(height: 8),
 
-              Text('End Date: ${_formatDate(_endedAt)}'),
-              const SizedBox(height: 8),
+                Text('End Date: ${_formatDate(_endedAt)}'),
+                const SizedBox(height: 8),
 
-              Text(
-                'Description: ${_description.isEmpty ? "Tidak diisi" : _description}',
-              ),
-              const SizedBox(height: 8),
+                Text(
+                  'Description: ${_description.isEmpty ? "Tidak diisi" : _description}',
+                ),
+                const SizedBox(height: 8),
 
-              Text(
-                'Thumbnail URL: ${_thumbnail.isEmpty ? "Tidak diisi" : _thumbnail}',
-              ),
-            ],
+                Text(
+                  'Thumbnail URL: ${_thumbnail.isEmpty ? "Tidak diisi" : _thumbnail}',
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,15 +119,10 @@ void _showEducationSummary() {
             children: [
               const Text(
                 'Add New Education',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Fill in your education information below.',
-              ),
+              const Text('Fill in your education information below.'),
               const SizedBox(height: 24),
 
               // === Institution ===
