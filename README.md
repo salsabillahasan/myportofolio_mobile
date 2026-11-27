@@ -115,6 +115,33 @@ Dari yang saya pahami, `GlobalKey<FormState>` digunakan supaya kita bisa mengaks
 
 Contohnya, pada field Institution, saya membuat validasi supaya pengguna tidak bisa mengosongkan kolom atau hanya mengisinya dengan spasi. Kalau input tidak sesuai, pesan error akan muncul dan ringkasan tidak ditampilkan. Saya juga menggunakan `TextInputType.url` untuk input Thumbnail URL, tetapi ternyata itu hanya mengatur jenis keyboard yang digunakan. Jadi, tetap perlu `validator` supaya aplikasi bisa memeriksa apakah URL yang dimasukkan sudah sesuai format.
 
+### Tugas 9
+
+**1. Mengapa kita menggunakan `@JsonSerializable(fieldRename: FieldRename.snake)` dan `@JsonKey(includeToJson: false)` daripada langsung menggunakan `Map<String, dynamic>`? Berikan contoh bug yang bisa dicegah.**
+
+Menurut saya, `@JsonSerializable` digunakan supaya Flutter lebih mudah mengubah data menjadi JSON dan membaca data dari Django. Jadi, kita tidak perlu mengatur setiap field secara manual. `FieldRename.snake` juga membantu menyesuaikan nama field yang berbeda antara Flutter dan Django. Contohnya, di Flutter menggunakan `fieldOfStudy`, sedangkan di Django menggunakan `field_of_study`. Kalau namanya tidak sesuai, data bisa gagal terbaca atau tersimpan.
+
+Sementara itu, `includeToJson: false` digunakan supaya ID tidak ikut dikirim ketika menambahkan Education baru, karena ID sudah dibuat oleh Django. Jadi, penggunaan model ini membantu mengurangi kesalahan dibandingkan membuat data JSON sendiri setiap kali mengirim request.
+
+**2. Mengapa Future perlu dibuat di `initState()` dan bukan langsung di `build()`? Mengapa menggunakan `ApiException` daripada `null`?**
+
+Dari yang saya pahami, `build()` bisa dijalankan berkali-kali ketika tampilan Flutter berubah. Kalau kita mengambil data Education langsung di dalam `build()`, Flutter bisa meminta data ke Django berulang kali. Karena itu, Future dibuat di `initState()` supaya pengambilan data awal cukup dilakukan sekali saat halaman dibuat.
+
+Untuk `ApiException`, fungsinya agar kita bisa mengetahui kalau ada masalah saat mengambil data. Kalau hanya menggunakan `null`, kita jadi tidak tahu apakah datanya memang kosong atau request ke Django gagal. Dengan `ApiException`, kita bisa menampilkan pesan error yang sesuai.
+
+**3. Apa perbedaan `SessionAuthentication` dan `TokenAuthentication`? Mengapa Flutter menggunakan token, tetapi Django tetap menggunakan session?**
+
+Menurut saya, `SessionAuthentication` menggunakan session dan cookie untuk mengenali pengguna yang sudah login, seperti pada website Django yang saya buat sebelumnya. Sedangkan `TokenAuthentication` menggunakan token yang didapat setelah login, kemudian token tersebut dikirim setiap kali melakukan request yang membutuhkan login.
+
+Flutter menggunakan token karena lebih mudah digunakan untuk berkomunikasi dengan API Django. Sementara itu, session tetap digunakan agar login pada website Django masih bisa berjalan seperti sebelumnya. Walaupun pengguna sudah login di Flutter, Django tetap perlu memeriksa apakah pengguna tersebut punya izin untuk menambahkan Education.
+
+**4. Apa fungsi job `build` dan `build_apk` pada GitHub Actions? Mengapa file `*.g.dart` dimasukkan ke `.gitignore`?**
+
+Dari yang saya pahami, job `build` digunakan untuk mengecek kode secara otomatis melalui `very_good_workflows`, seperti memeriksa format kode, menjalankan `flutter analyze`, melakukan testing, dan mengecek test coverage. Sedangkan `build_apk` digunakan untuk membuat file APK Android setelah job `build` berhasil.
+
+File `*.g.dart` dimasukkan ke `.gitignore` karena file tersebut dibuat secara otomatis oleh `build_runner`, jadi tidak perlu disimpan di GitHub. Saat GitHub Actions berjalan, file itu bisa dibuat ulang menggunakan `build_runner` sebelum aplikasi diperiksa dan di-build.
+
+Menurut saya, GitHub Actions yang berhasil juga belum tentu berarti aplikasi bebas dari semua bug. Kita tetap perlu mencoba aplikasinya secara langsung untuk memastikan fitur seperti login dan menambahkan Education berjalan dengan benar.
 
 
 ## AI Usage Disclosure
@@ -167,6 +194,38 @@ ChatGPT membantu saya membuat Education Form menggunakan `StatefulWidget`, menam
 Selain itu, ChatGPT membantu saya membuat tombol Simpan dan `AlertDialog` untuk menampilkan ringkasan data yang sudah diisi. Untuk navigasi, AI membantu menghubungkan Education Form dengan kartu di halaman Home dan menu Drawer.
 
 Saat menemukan warning `unused_field` dan masalah overflow pada halaman Home, saya menggunakan ChatGPT untuk memahami penyebabnya dan mencoba memperbaiki kode di VS Code. Setelah itu, saya menjalankan `flutter analyze` dan melakukan pengujian langsung, seperti mencoba input kosong, tanggal yang tidak sesuai, serta URL yang tidak valid.
+
+### Tugas 9
+
+#### Tools and Purpose
+
+Pada Tugas 9, saya menggunakan ChatGPT untuk membantu memahami materi integrasi Flutter dengan Django REST Framework, terutama tentang penggunaan model JSON, pengambilan data dari API, autentikasi, dan GitHub Actions.
+
+Saya juga menggunakan ChatGPT untuk membahas beberapa bagian kode yang masih membingungkan dan membantu menyusun jawaban refleksi dengan bahasa yang lebih mudah saya pahami.
+
+#### Prompting Strategy
+
+Saya menggunakan ChatGPT dengan cara bertanya tentang hal-hal yang belum saya pahami selama mempelajari materi Tugas 9. Saya biasanya memberikan contoh dari fitur Education yang saya kerjakan, lalu meminta penjelasan sederhana agar lebih mudah memahami cara kerjanya.
+
+Beberapa pertanyaan yang saya diskusikan antara lain:
+
+1. Mengapa ID pada model Education menggunakan `includeToJson: false`, padahal ID tetap diperlukan ketika mengambil data dari Django.
+2. Mengapa Future untuk mengambil data Education sebaiknya dibuat di `initState()`, bukan langsung di `build()`.
+3. Apakah Flutter atau Django yang mengatur izin untuk melihat dan menambahkan Education.
+4. Mengapa file `education.g.dart` dimasukkan ke `.gitignore`, padahal file tersebut diperlukan untuk menjalankan aplikasi.
+5. Apakah GitHub Actions yang berhasil berarti aplikasi sudah bebas dari bug dan masih perlu diuji secara manual.
+6. Apakah automated testing dan manual testing yang berhasil sudah cukup untuk memastikan fitur Education benar-benar aman.
+
+#### Parts Assisted by AI
+
+ChatGPT membantu saya memahami perbedaan antara data yang dikirim Flutter dan data yang diterima dari Django, terutama terkait penggunaan ID pada model Education. Saya juga mendapat penjelasan tentang `FutureBuilder`, `initState()`, dan alasan pengambilan data tidak sebaiknya dilakukan berulang kali di dalam `build()`.
+
+Selain itu, ChatGPT membantu saya memahami perbedaan peran Flutter dan Django dalam proses login dan pemeriksaan izin pengguna. Saya juga menggunakan ChatGPT untuk mempelajari cara kerja `build_runner`, file `.g.dart`, serta hubungan antara GitHub Actions dan proses build aplikasi.
+
+Untuk bagian pengujian, saya berdiskusi mengenai keterbatasan automated testing dan manual testing. Dari diskusi tersebut, saya memahami bahwa hasil pengujian yang berhasil belum tentu menjamin aplikasi sepenuhnya bebas dari bug.
+
+Terakhir, ChatGPT membantu saya memahami pertanyaan refleksi Tugas 9 dan merapikan jawabannya agar lebih sederhana serta sesuai dengan pemahaman saya sebagai mahasiswa yang masih belajar Flutter.
+
 
 ### AI Conversation Reference
 
