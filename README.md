@@ -1,22 +1,24 @@
 # MyPortfolio Mobile
 
+[![CI](https://github.com/salsabillahasan/myportofolio_mobile/actions/workflows/main.yaml/badge.svg)](https://github.com/salsabillahasan/myportofolio_mobile/actions/workflows/main.yaml)
+
 ## About the Project
 
 MyPortfolio Mobile adalah aplikasi portofolio pribadi yang saya buat menggunakan Flutter dan Dart untuk mata kuliah Pemrograman Berbasis Platform (PBP). Proyek ini merupakan pengembangan dari website portofolio yang sebelumnya saya buat menggunakan Django, tetapi aplikasi Flutter disimpan dalam repository yang terpisah.
 
-Pada tahap ini, saya berfokus membuat halaman utama sederhana yang menampilkan identitas pribadi dan beberapa menu portofolio. Aplikasi ini belum terhubung dengan Django REST Framework dan tombol menu belum menjalankan navigasi atau proses logout yang sebenarnya.
+Saat ini aplikasi menampilkan halaman utama dan data portofolio dari Django REST Framework. Pengguna dapat melihat daftar Project dan Education, membuka detailnya, serta menambahkan data setelah login.
 
 ## Features
 
 Fitur yang sudah saya implementasikan:
 
-- Menampilkan tiga kartu informasi berisi NPM, nama, dan kelas PBP.
-- Menampilkan tiga tombol menu: Lihat Proyek, Tambah Proyek, dan Logout.
-- Memberikan warna berbeda untuk setiap tombol, yaitu biru, hijau, dan merah.
-- Menampilkan SnackBar dengan pesan sesuai tombol yang ditekan.
-- Memisahkan kode halaman utama ke dalam `menu.dart` agar struktur proyek lebih rapi.
-- Menggunakan `StatelessWidget` untuk halaman utama.
-- Menambahkan widget testing untuk memeriksa tampilan, menu, interaksi SnackBar, dan warna tombol.
+- Menampilkan informasi diri dan menu portofolio.
+- Menampilkan daftar Project dan Education dari API Django, lalu membuka detailnya.
+- Mengizinkan semua orang melihat data, tetapi mewajibkan login untuk menambah Project atau Education.
+- Mengirim permintaan tulis ke Django menggunakan token autentikasi.
+- Memperbarui daftar data dengan menarik layar ke bawah.
+- Menjalankan pemeriksaan kode, tes, dan build APK melalui GitHub Actions.
+- Menambahkan automated test untuk tampilan dan integrasi API Education.
 
 ## Technologies Used
 
@@ -28,12 +30,25 @@ Fitur yang sudah saya implementasikan:
 
 ## Setup and How to Run
 
-Untuk menjalankan proyek ini, pastikan Flutter SDK sudah terpasang dan Google Chrome tersedia sebagai perangkat untuk menjalankan aplikasi.
+Untuk menjalankan proyek ini, pastikan Flutter SDK dan Google Chrome sudah terpasang. Aplikasi juga memerlukan backend Django yang sedang berjalan. Repository backend tersedia di [salsabillahasan/myportofolio](https://github.com/salsabillahasan/myportofolio).
 
-1. Clone repository ini dari GitHub.
-2. Buka folder `myportofolio_mobile` menggunakan VS Code atau terminal.
+1. Clone dan jalankan backend Django mengikuti petunjuk di README repository backend. Secara default, backend berjalan di `http://localhost:8000`.
+2. Clone repository Flutter ini dan buka foldernya di VS Code atau terminal:
+
+   ```bash
+   git clone https://github.com/salsabillahasan/myportofolio_mobile.git
+   cd myportofolio_mobile
+   ```
+
 3. Jalankan `flutter pub get` untuk memasang dependency proyek.
-4. Jalankan `flutter run -d chrome` untuk membuka aplikasi melalui Chrome.
+4. Jalankan `dart run build_runner build --delete-conflicting-outputs` untuk membuat file serialisasi JSON.
+5. Jalankan aplikasi di Chrome dengan perintah berikut:
+
+   ```bash
+   flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8000
+   ```
+
+Untuk Android Emulator lokal, gunakan `http://10.0.2.2:8000` sebagai nilai `API_BASE_URL`. Endpoint Education yang dipakai aplikasi adalah `GET` dan `POST /api/v1/education/`. GET bisa digunakan tanpa login, sedangkan POST memerlukan token login.
 
 Untuk memeriksa kode dan menjalankan pengujian, gunakan:
 
