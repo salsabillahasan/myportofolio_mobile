@@ -12,7 +12,10 @@ class EducationDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = (education.thumbnail ?? '').trim();
+    final thumbnail = (education.thumbnail ?? '').trim();
+    final imageUrl = education.logoSrc.trim().isNotEmpty
+        ? education.logoSrc.trim()
+        : thumbnail;
     return Scaffold(
       appBar: AppBar(title: Text(education.institution)),
       body: ListView(
@@ -23,6 +26,8 @@ class EducationDetailScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 16),
+          Text('ID: ${education.id ?? "Tidak tersedia"}'),
+          const SizedBox(height: 8),
           Text('Degree: ${education.degree}'),
           const SizedBox(height: 8),
           Text('Field of study: ${education.fieldOfStudy}'),
@@ -32,6 +37,20 @@ class EducationDetailScreen extends StatelessWidget {
           Text('End date: ${_date(education.endedAt)}'),
           const SizedBox(height: 8),
           Text('Description: ${education.description}'),
+          const SizedBox(height: 8),
+          Text(
+            'Thumbnail URL: ${thumbnail.isEmpty ? "Tidak diisi" : thumbnail}',
+          ),
+          const SizedBox(height: 8),
+          Text('Jumlah favorit: ${education.starCount}'),
+          const SizedBox(height: 8),
+          Text(
+            'Kamu memfavoritkan ini: ${education.isStarred ? "Ya" : "Tidak"}',
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Nama pemberi favorit: ${education.starredByNames.isEmpty ? "Belum ada" : education.starredByNames}',
+          ),
           if (imageUrl.isNotEmpty) ...[
             const SizedBox(height: 16),
             Image.network(
